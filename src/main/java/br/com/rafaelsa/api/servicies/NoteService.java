@@ -6,14 +6,17 @@ import br.com.rafaelsa.api.entities.Link;
 import br.com.rafaelsa.api.entities.Note;
 import br.com.rafaelsa.api.entities.Tag;
 import br.com.rafaelsa.api.entities.User;
+import br.com.rafaelsa.api.exceptions.NoteOperationException;
 import br.com.rafaelsa.api.exceptions.UserOperationException;
 import br.com.rafaelsa.api.repositories.NoteRepository;
+import br.com.rafaelsa.api.repositories.TagRepository;
 import br.com.rafaelsa.api.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -21,6 +24,9 @@ public class NoteService {
 
   @Autowired
   private UserRepository userRepository;
+
+  @Autowired
+  private TagRepository tagRepository;
 
   @Autowired
   private NoteRepository noteRepository;
@@ -63,5 +69,63 @@ public class NoteService {
     noteRepository.save(note);
 
     return ResponseEntity.status(HttpStatus.OK).body(NoteResponseDTO.fromEntity(note));
+  }
+
+  public ResponseEntity<NoteResponseDTO> show(Long noteId) {
+    Note note = noteRepository.findById(noteId).orElseThrow(() -> new NoteOperationException("Nota não encontrada", HttpStatus.BAD_REQUEST));
+
+    return ResponseEntity.status(HttpStatus.OK).body(NoteResponseDTO.fromEntity(note));
+  }
+
+  private List<Note> getNotes(Long userId, String title, List<String> tags) {
+    if (userId != null) {
+      if (!tags.isEmpty()) {
+        if (title != null) {
+          return noteRepository.findByTagsUserIdAndTitleContaining(tags, userId, title);
+        }
+        return noteRepository.findByTagsAndUserId(tags, userId);
+      }
+    }
+
+    if (userId != null) {
+      if (title != null) {
+        return noteRepository.findByUserIdAndTitleContainingIgnoreCase(userId, title);
+      }
+      return noteRepository.findByUserId(userId);
+    }
+
+    if (title != null) {
+      return noteRepository.findByTitleContainingIgnoreCase(title);
+    }
+
+    return noteRepository.findAll();
+  }
+
+  private ResponseEntity<List<NoteResponseDTO>> buildResponse(List<Note> noteList) {
+    if(noteList.isEmpty()) {
+      return ResponseEntity.noContent().build();
+    }
+
+    List<NoteResponseDTO> noteResponseDTOS = noteList.stream()
+        .map(NoteResponseDTO::fromEntity)
+        .sorted(Comparator.comparing(NoteResponseDTO::title, Comparator.nullsFirst(Comparator.naturalOrder())))
+        .toList();
+
+    return ResponseEntity.status(HttpStatus.OK).body(noteResponseDTOS);
+  }
+
+  public ResponseEntity<List<NoteResponseDTO>> index(Long userId, String title, List<String> tags) {
+
+    List<String> safeTags = tags != null ? tags : List.of();
+    List<Note> noteList = getNotes(userId, title, safeTags);
+    return buildResponse(noteList);
+  }
+
+  public ResponseEntity<Void> delete(Long noteId) {
+    Note note = noteRepository.findById(noteId).orElseThrow(() -> new NoteOperationException("Não existe nota para o ID informado", HttpStatus.BAD_REQUEST));
+
+    noteRepository.delete(note);
+
+    return ResponseEntity.ok().build();
   }
 }

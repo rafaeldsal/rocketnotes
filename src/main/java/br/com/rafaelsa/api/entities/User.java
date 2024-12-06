@@ -13,6 +13,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +31,13 @@ public class User {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "name", updatable = false)
+  @Column(name = "name", nullable = false)
   private String name;
 
-  @Column(name = "email", updatable = false)
+  @Column(name = "email", nullable = false)
   private String email;
 
-  @Column(name = "password", updatable = false)
+  @Column(name = "password", nullable = false)
   private String password;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

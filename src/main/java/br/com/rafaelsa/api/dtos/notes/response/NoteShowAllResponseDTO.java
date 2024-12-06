@@ -8,15 +8,14 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
-public record NoteResponseDTO(Long id,
-                              String title,
-                              String description,
-                              Long userId,
-                              LocalDateTime createdAt,
-                              LocalDateTime updatedAt,
-                              List<TagResponseDTO> tags,
-                              List<LinkResponseDTO> links) {
-
+public record NoteShowAllResponseDTO(Long id,
+                                     String title,
+                                     String description,
+                                     Long userId,
+                                     LocalDateTime createdAt,
+                                     LocalDateTime updatedAt,
+                                     List<TagResponseDTO> tags,
+                                     List<LinkResponseDTO> links) {
   public static NoteResponseDTO fromEntity(Note note) {
     List<TagResponseDTO> tags = note.getTagList().stream()
         .map(TagResponseDTO::fromEntity)

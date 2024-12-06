@@ -40,6 +40,7 @@ public class UserService {
 
   public ResponseEntity<UserResponseDTO> update(Long userId, UserRequestDTO userRequestDTO) {
     User getUser = userRepository.findById(userId).orElseThrow(() -> new UserOperationException("Usuário não encontrado.", HttpStatus.CONFLICT));
+
     userRepository.findByEmail(userRequestDTO.email())
         .filter(user -> !user.getId().equals(userId))
         .ifPresent(user -> {

@@ -30,6 +30,12 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
   }
 
+  @ExceptionHandler(NoteOperationException.class)
+  public ResponseEntity<ErrorResponse> handleNoteOperationException(NoteOperationException ex) {
+    ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), ex.getStatus());
+    return ResponseEntity.status(ex.getStatus()).body(errorResponse);
+  }
+
   @ExceptionHandler(UserOperationException.class)
   public ResponseEntity<ErrorResponse> handleUserOperationException(UserOperationException ex) {
     ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), ex.getStatus());
