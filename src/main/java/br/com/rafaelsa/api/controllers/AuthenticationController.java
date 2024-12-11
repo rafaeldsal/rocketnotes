@@ -1,15 +1,14 @@
 package br.com.rafaelsa.api.controllers;
 
-import br.com.rafaelsa.api.dtos.users.requests.AuthenticationUserRequestDTO;
-import br.com.rafaelsa.api.dtos.users.requests.UserRequestDTO;
-import br.com.rafaelsa.api.dtos.users.response.AuthenticationUserResponseDTO;
+import br.com.rafaelsa.api.dtos.users.requests.RegisterUserDTO;
+import br.com.rafaelsa.api.dtos.users.response.LoginResponse;
+import br.com.rafaelsa.api.dtos.users.response.LoginUserDTO;
+import br.com.rafaelsa.api.dtos.users.response.UserResponseDTO;
 import br.com.rafaelsa.api.entities.User;
-import br.com.rafaelsa.api.servicies.TokenService;
-import br.com.rafaelsa.api.servicies.UserService;
+import br.com.rafaelsa.api.servicies.AuthenticationService;
+import br.com.rafaelsa.api.servicies.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,25 +19,28 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
   @Autowired
-  private AuthenticationManager authenticationManager;
+  private JwtService jwtService;
 
   @Autowired
-  private UserService userService;
-
-  @Autowired
-  private TokenService tokenService;
-
-  @PostMapping("/login")
-  public ResponseEntity login(@RequestBody AuthenticationUserRequestDTO authenticationUserDTO) {
-    var usernamePassword = new UsernamePasswordAuthenticationToken(authenticationUserDTO.email(), authenticationUserDTO.password());
-    var auth = this.authenticationManager.authenticate(usernamePassword);
-    var token = tokenService.generateToken((User) auth.getPrincipal());
-
-    return ResponseEntity.ok(new AuthenticationUserResponseDTO(token));
-  }
+  private AuthenticationService authenticationService;
 
   @PostMapping("/register")
-  public ResponseEntity register(@RequestBody UserRequestDTO userRequestDTO) {
-    return userService.create(userRequestDTO);
+  public ResponseEntity<UserResponseDTO> register(@RequestBody RegisterUserDTO registerUserDTO) {
+    return authenticationService.register(registerUserDTO);
   }
+
+  @PostMapping("/login")
+  public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDTO loginUserDTO) {
+    User authenticateUser = authenticationService.authenticate(loginUserDTO);
+
+    String jwtToken = jwtService.generateToken(authenticateUser);
+
+    System.out.println(authenticateUser.toString());
+
+    LoginResponse loginResponse = new LoginResponse(authenticateUser, jwtToken, jwtService.getExpirationTime());
+
+    return ResponseEntity.ok(loginResponse);
+  }
+
+
 }

@@ -1,5 +1,7 @@
 package br.com.rafaelsa.api.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,9 +48,11 @@ public class Note {
   private User user;
 
   @OneToMany(mappedBy = "note", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonManagedReference
   private List<Tag> tagList = new ArrayList<>();
 
   @OneToMany(mappedBy = "note", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonManagedReference
   private List<Link> linkList = new ArrayList<>();
 
   @Column(name = "created_at", nullable = false)

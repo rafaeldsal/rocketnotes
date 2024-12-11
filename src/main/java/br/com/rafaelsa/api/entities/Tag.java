@@ -1,7 +1,7 @@
 package br.com.rafaelsa.api.entities;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,6 +23,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
+@JsonIgnoreProperties({"user"})
 public class Tag {
 
   @Id
@@ -34,6 +35,7 @@ public class Tag {
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "notes_id", nullable = false)
+  @JsonBackReference
   private Note note;
 
   @ManyToOne

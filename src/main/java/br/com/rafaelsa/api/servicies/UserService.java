@@ -1,5 +1,6 @@
 package br.com.rafaelsa.api.servicies;
 
+import br.com.rafaelsa.api.dtos.users.requests.RegisterUserDTO;
 import br.com.rafaelsa.api.dtos.users.requests.UserRequestDTO;
 import br.com.rafaelsa.api.dtos.users.response.UserResponseDTO;
 import br.com.rafaelsa.api.entities.User;

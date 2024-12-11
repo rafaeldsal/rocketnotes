@@ -1,7 +1,6 @@
 package br.com.rafaelsa.api.entities;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,6 +36,7 @@ public class Link {
 
   @ManyToOne
   @JoinColumn(name = "notes_id", nullable = false)
+  @JsonBackReference
   private Note note;
 
   @Column(name = "created_at", nullable = false)

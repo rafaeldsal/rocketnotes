@@ -18,7 +18,6 @@ public class AuthorizationService implements UserDetailsService {
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     User user = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("Usuário com login [" + username +"] não foi encontrado."));
 
-
     return user;
   }
 
