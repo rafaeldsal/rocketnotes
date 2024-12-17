@@ -3,7 +3,7 @@ package br.com.rafaelsa.api.controllers;
 import br.com.rafaelsa.api.dtos.notes.request.NoteRequestDTO;
 import br.com.rafaelsa.api.dtos.notes.response.NoteResponseDTO;
 import br.com.rafaelsa.api.servicies.NoteService;
-import jakarta.websocket.server.PathParam;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,7 +26,7 @@ public class NoteController {
 
   @PostMapping("/{user_id}")
   public ResponseEntity<NoteResponseDTO> createNote(@PathVariable(name = "user_id") Long userId,
-                                                    @RequestBody NoteRequestDTO noteRequestDTO) {
+                                                    @Valid @RequestBody NoteRequestDTO noteRequestDTO) {
     return noteService.create(userId, noteRequestDTO);
   }
 

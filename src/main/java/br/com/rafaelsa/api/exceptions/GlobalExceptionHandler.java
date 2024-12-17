@@ -41,4 +41,22 @@ public class GlobalExceptionHandler {
     ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), ex.getStatus());
     return ResponseEntity.status(ex.getStatus()).body(errorResponse);
   }
+
+  @ExceptionHandler(PasswordMismatchException.class)
+  public ResponseEntity<ErrorResponse> handlePasswordMismatchException(PasswordMismatchException ex) {
+    ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), ex.getStatus());
+    return ResponseEntity.status(ex.getStatus()).body(errorResponse);
+  }
+
+  @ExceptionHandler(EmailAlreadyExistsException.class)
+  public ResponseEntity<ErrorResponse> handleEmailAlreadyExistsException(EmailAlreadyExistsException ex) {
+    ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), ex.getStatus());
+    return ResponseEntity.status(ex.getStatus()).body(errorResponse);
+  }
+
+  @ExceptionHandler(TagsNotFoundException.class)
+  public ResponseEntity<ErrorResponse> handleTagsNotFoundException(TagsNotFoundException ex) {
+    ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), ex.getStatus());
+    return ResponseEntity.status(ex.getStatus()).body(errorResponse);
+  }
 }

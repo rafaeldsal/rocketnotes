@@ -3,6 +3,7 @@ package br.com.rafaelsa.api.controllers;
 import br.com.rafaelsa.api.dtos.users.requests.UserRequestDTO;
 import br.com.rafaelsa.api.dtos.users.response.UserResponseDTO;
 import br.com.rafaelsa.api.servicies.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +21,7 @@ public class UserControllers {
   private UserService userService;
 
   @PostMapping
-  public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO userRequestDTO) {
+  public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
     return userService.create(userRequestDTO);
   }
 

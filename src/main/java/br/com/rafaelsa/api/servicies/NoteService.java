@@ -11,6 +11,8 @@ import br.com.rafaelsa.api.exceptions.UserOperationException;
 import br.com.rafaelsa.api.repositories.NoteRepository;
 import br.com.rafaelsa.api.repositories.TagRepository;
 import br.com.rafaelsa.api.repositories.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,8 @@ import java.util.List;
 @Service
 public class NoteService {
 
+  private static final Logger logger = LoggerFactory.getLogger(NoteService.class);
+
   @Autowired
   private UserRepository userRepository;
 
@@ -32,6 +36,9 @@ public class NoteService {
   private NoteRepository noteRepository;
 
   public ResponseEntity<NoteResponseDTO> create(Long userId, NoteRequestDTO noteRequestDTO) {
+
+    logger.info("Recebendo solicitação para criar nota do usuário id: {}", userId);
+
     User user = userRepository.findById(userId)
         .orElseThrow(
             () -> new UserOperationException("Usuário não encontrado", HttpStatus.BAD_REQUEST));
@@ -68,16 +75,24 @@ public class NoteService {
 
     noteRepository.save(note);
 
+    logger.info("Nota criada com sucesso para o usuário com email: {}", note.getUser().getEmail());
+
     return ResponseEntity.status(HttpStatus.OK).body(NoteResponseDTO.fromEntity(note));
   }
 
   public ResponseEntity<NoteResponseDTO> show(Long noteId) {
-    Note note = noteRepository.findById(noteId).orElseThrow(() -> new NoteOperationException("Nota não encontrada", HttpStatus.BAD_REQUEST));
+
+    logger.info("Recebendo solicitação para exibir nota de id: {}", noteId);
+    Note note = noteRepository.findById(noteId)
+        .orElseThrow(() -> new NoteOperationException("Nota não encontrada", HttpStatus.BAD_REQUEST));
 
     return ResponseEntity.status(HttpStatus.OK).body(NoteResponseDTO.fromEntity(note));
   }
 
   private List<Note> getNotes(Long userId, String title, List<String> tags) {
+
+    logger.info("Recuperando notas");
+
     if (userId != null) {
       if (!tags.isEmpty()) {
         if (title != null) {
@@ -116,13 +131,18 @@ public class NoteService {
 
   public ResponseEntity<List<NoteResponseDTO>> index(Long userId, String title, List<String> tags) {
 
+    logger.info("Recebendo solicitação para exibir notas usuário: {}", userId);
+
     List<String> safeTags = tags != null ? tags : List.of();
     List<Note> noteList = getNotes(userId, title, safeTags);
     return buildResponse(noteList);
   }
 
   public ResponseEntity<Void> delete(Long noteId) {
-    Note note = noteRepository.findById(noteId).orElseThrow(() -> new NoteOperationException("Não existe nota para o ID informado", HttpStatus.BAD_REQUEST));
+    logger.info("Recebendo solicitação para deletar nota de id: {}", noteId);
+
+    Note note = noteRepository.findById(noteId)
+        .orElseThrow(() -> new NoteOperationException("Não existe nota para o ID informado", HttpStatus.BAD_REQUEST));
 
     noteRepository.delete(note);
 
