@@ -1,5 +1,6 @@
 package br.com.rafaelsa.api.dtos.users.requests;
 
+import br.com.rafaelsa.api.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -14,6 +15,8 @@ public record UserRequestDTO(
 
     @Length(min = 8, max = 100, message = "A senha deve conter de 8 a 100 caracteres.")
     String password,
+
+    UserRole role,
 
     @JsonProperty("old_password") String oldPassword) {
 
