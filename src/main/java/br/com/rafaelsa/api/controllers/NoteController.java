@@ -24,10 +24,9 @@ public class NoteController {
   @Autowired
   private NoteService noteService;
 
-  @PostMapping("/{user_id}")
-  public ResponseEntity<NoteResponseDTO> createNote(@PathVariable(name = "user_id") Long userId,
-                                                    @Valid @RequestBody NoteRequestDTO noteRequestDTO) {
-    return noteService.create(userId, noteRequestDTO);
+  @PostMapping("/")
+  public ResponseEntity<NoteResponseDTO> createNote(@Valid @RequestBody NoteRequestDTO noteRequestDTO) {
+    return noteService.create(noteRequestDTO);
   }
 
   @GetMapping("/{note_id}")

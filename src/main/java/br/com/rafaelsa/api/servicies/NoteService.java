@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -35,7 +36,10 @@ public class NoteService {
   @Autowired
   private NoteRepository noteRepository;
 
-  public ResponseEntity<NoteResponseDTO> create(Long userId, NoteRequestDTO noteRequestDTO) {
+  public ResponseEntity<NoteResponseDTO> create(NoteRequestDTO noteRequestDTO) {
+
+    String userContext = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Long userId = Long.parseLong(userContext);
 
     logger.info("Recebendo solicitação para criar nota do usuário id: {}", userId);
 

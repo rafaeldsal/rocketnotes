@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -22,7 +23,10 @@ public class TagService {
   @Autowired
   private TagRepository tagRepository;
 
-  public ResponseEntity<List<TagResponseDTO>> index(Long userId) {
+  public ResponseEntity<List<TagResponseDTO>> index() {
+
+    String userContext = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Long userId = Long.parseLong(userContext);
 
     logger.info("Recebendo solicitação para apresentar tags do usuário de id: {}", userId);
 

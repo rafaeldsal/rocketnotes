@@ -6,6 +6,7 @@ import br.com.rafaelsa.api.servicies.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,10 +26,13 @@ public class UserControllers {
     return userService.create(userRequestDTO);
   }
 
-  @PutMapping("/{user_id}")
-  public ResponseEntity<UserResponseDTO> updateUser(@PathVariable(name = "user_id") Long userId,
-                                                    @RequestBody UserRequestDTO userRequestDTO) {
-    return userService.update(userId, userRequestDTO);
+  @PutMapping("/update")
+  public ResponseEntity<Object> updateUser(@RequestBody UserRequestDTO userRequestDTO) {
+    try {
+      return ResponseEntity.ok().body(userService.update(userRequestDTO));
+    } catch (Exception e) {
+      return ResponseEntity.badRequest().body(e.getMessage());
+    }
   }
 
 }

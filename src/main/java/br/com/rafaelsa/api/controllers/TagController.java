@@ -18,9 +18,8 @@ public class TagController {
   @Autowired
   private TagService tagService;
 
-
-  @GetMapping("{user_id}")
-  public ResponseEntity<List<TagResponseDTO>> showTags(@PathVariable(name = "user_id") Long userId){
-    return tagService.index(userId);
+  @GetMapping("/")
+  public ResponseEntity<List<TagResponseDTO>> showTags(){
+    return tagService.index();
   }
 }

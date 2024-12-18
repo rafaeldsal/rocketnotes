@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,9 +46,12 @@ public class UserService {
     return ResponseEntity.status(HttpStatus.CREATED).body(UserResponseDTO.fromEntity(user));
   }
 
-  public ResponseEntity<UserResponseDTO> update(Long userId, UserRequestDTO userRequestDTO) {
+  public UserResponseDTO update(UserRequestDTO userRequestDTO) {
 
     logger.info("Recebendo solicitação para atualizar usuário com email: {}", userRequestDTO.email());
+
+    String userContext = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Long userId = Long.parseLong(userContext);
 
     User getUser = userRepository.findById(userId)
         .orElseThrow(() -> new UserOperationException("Usuário não encontrado.", HttpStatus.CONFLICT));
@@ -82,6 +86,6 @@ public class UserService {
 
     userRepository.save(getUser);
 
-    return ResponseEntity.status(HttpStatus.OK).body(UserResponseDTO.fromEntity(getUser));
+    return UserResponseDTO.fromEntity(getUser);
   }
 }
